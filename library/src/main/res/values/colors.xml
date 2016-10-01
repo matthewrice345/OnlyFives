@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--To user a different color than what is show below, add the color with the same name as shown here to your main project (app)-->
+    <color name="rating_dialog_primary">#03A9F4</color>
+    <color name="rating_dialog_gray">#D6D6D6</color>
+    <color name="rating_dialog_light_gray">#EDEDED</color>
+    <color name="rating_dialog_dark_gray">#6A6A6A</color>
+    <color name="rating_dialog_black">#000000</color>
+
+</resources>

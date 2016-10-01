@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Rating Dialog</string>
+
+    <string name="rating_dialog_title">How are we doing?</string>
+    <string name="rating_dialog_feedback_title">How can we improve?</string>
+    <string name="rating_dialog_feedback_thanks">Thank you for the feedback.</string>
+
+    <string name="rating_dialog_content_description_star_1">One Star</string>
+    <string name="rating_dialog_content_description_star_2">Two Star</string>
+    <string name="rating_dialog_content_description_star_3">Three Star</string>
+    <string name="rating_dialog_content_description_star_4">Four Star</string>
+    <string name="rating_dialog_content_description_star_5">Five Star</string>
+</resources>
