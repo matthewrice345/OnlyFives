@@ -36,7 +36,10 @@ import android.widget.Toast;
  */
 public class RatingDialog extends AppCompatDialogFragment {
 
+    public enum Style {LIGHT, DARK}
+
     private static final String RATING_STATE = "RATING_STATE";
+    private static final String SHOW_AS_LIGHT = "SHOW_AS_LIGHT";
 
     /**
      * Interface for getting rating results and click events
@@ -92,7 +95,10 @@ public class RatingDialog extends AppCompatDialogFragment {
 
         View rootView = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_rating, null);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.RatingDialogStyle);
+        boolean showAsLight = getArguments().getBoolean(SHOW_AS_LIGHT, true);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
+                showAsLight ? R.style.RatingDialogStyle_Light : R.style.RatingDialogStyle_Dark);
         builder.setTitle(R.string.rating_dialog_title);
         builder.setView(rootView);
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
@@ -129,17 +135,27 @@ public class RatingDialog extends AppCompatDialogFragment {
 
     //region Hiding/Showing
 
-    private static RatingDialog newInstance() {
-        return new RatingDialog();
+    private static RatingDialog newInstance(boolean showAsLight) {
+        Bundle args = new Bundle();
+        args.putBoolean(SHOW_AS_LIGHT, showAsLight);
+
+        RatingDialog dialog = new RatingDialog();
+        dialog.setArguments(args);
+        return dialog;
     }
 
-    public static void show(FragmentManager fm) {
+    /**
+     * Show the dialog
+     * @param fm Support Fragment Manager
+     * @param style Preference to show as Light or Dark
+     */
+    public static void show(FragmentManager fm, Style style) {
         if(fm.findFragmentByTag(RatingDialog.class.getSimpleName()) != null) {
             remove(fm);
         }
 
         try {
-            RatingDialog dialog = RatingDialog.newInstance();
+            RatingDialog dialog = RatingDialog.newInstance(style == Style.LIGHT);
             dialog.show(fm, RatingDialog.class.getSimpleName());
         } catch (IllegalStateException e) {
             Log.e("RatingDialog", "Dialog Down, Dialog Down! " + e);
@@ -176,6 +192,27 @@ public class RatingDialog extends AppCompatDialogFragment {
         mRating3.setOnClickListener(mRating3ClickListener);
         mRating4.setOnClickListener(mRating4ClickListener);
         mRating5.setOnClickListener(mRating5ClickListener);
+
+        //Restore State
+        switch (mStarClicked) {
+            case 1:
+                mRating1.performClick();
+                break;
+            case 2:
+                mRating2.performClick();
+                break;
+            case 3:
+                mRating3.performClick();
+                break;
+            case 4:
+                mRating4.performClick();
+                break;
+            case 5:
+                mRating5.performClick();
+                break;
+            default:
+                break;
+        }
     }
 
     //endregion

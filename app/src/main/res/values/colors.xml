@@ -3,4 +3,7 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <!--Example of overriding the dialogs primary color-->
+    <color name="rating_dialog_primary">#FF4081</color>
 </resources>
