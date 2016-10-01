@@ -22,7 +22,7 @@ To include into your project add the following to your apps build.gradle Be sure
         compile(name:'onlyfives', ext:'aar')
     }
 
-<img src="https://github.com/matthewrice345/OnlyFives/blob/master/screens/screenshot_1.png" alt="OnlyFives Screenshot 1" width="400" height="681">
+<img src="https://github.com/matthewrice345/OnlyFives/blob/master/screens/screenshot_1.png" alt="OnlyFives Screenshot 1" width="400" height="681"> <img src="https://github.com/matthewrice345/OnlyFives/blob/master/screens/screenshot_2.png" alt="OnlyFives Screenshot 2" width="400" height="681">
 
 ![Sample](screens/screenshot_1.png) 
 ![Sample](screens/screenshot_2.png) 
