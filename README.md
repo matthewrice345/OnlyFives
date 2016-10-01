@@ -1,2 +1,2 @@
 # OnlyFives
-A rating dialog for Android which helps get to 5 star ratings
+A rating dialog for Android which helps get 5 star ratings
