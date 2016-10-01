@@ -21,7 +21,7 @@ public class SampleActivity extends AppCompatActivity implements RatingDialog.Ra
             @Override
             public void onClick(View v) {
                 //Show the dialog
-                RatingDialog.show(getSupportFragmentManager(), RatingDialog.Style.DARK);
+                RatingDialog.show(getSupportFragmentManager(), RatingDialog.Style.LIGHT);
             }
         });
     }
