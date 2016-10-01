@@ -22,6 +22,6 @@ To include into your project add the following to your apps build.gradle Be sure
         compile(name:'onlyfives', ext:'aar')
     }
 
-![Sample](screens/screenshot_1.jpg)
-![Sample](screens/screenshot_2.jpg)
-![Sample](screens/screenshot_3.jpg)
+![Sample](screens/screenshot_1.png)
+![Sample](screens/screenshot_2.png)
+![Sample](screens/screenshot_3.png)
