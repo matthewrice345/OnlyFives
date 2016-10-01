@@ -2,7 +2,7 @@
 
 An Android rating dialog to helps solicite feedback and get higher ratings
 
-## Use Case
+## Usage
 
 As a developer I want only 4 and 5 star ratings to be taken to the Play Store to review my application. 
 OnlyFives can filter who intends on rating 4 or 5 stars and make decisions to solicit feedback or take them to the Store.
