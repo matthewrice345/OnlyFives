@@ -35,13 +35,20 @@ public class SampleActivity extends AppCompatActivity implements RatingDialog.Ra
     public void ratingClicked(int stars, @Nullable RatingDialog dialog) {
         //Where click events are reported
 
-        //Maybe look for a 5 Star rating and take the user to the Play Store..
-        if(stars == 5) {
+        //Maybe look for a 4 or 5 Star rating and take the user to the Play Store..
+        if(stars == 4 || stars == 5) {
             //Go to Play Store
 
             if(dialog != null) {
-                dialog.dismiss();
+                //Dismiss if taking a user to the play store
+                //dialog.dismiss();
             }
         }
+    }
+
+    @Override
+    public boolean solicitFeedback(int stars) {
+        //Only solicit feedback if less than 4 stars
+        return stars < 4;
     }
 }

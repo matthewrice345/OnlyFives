@@ -52,6 +52,7 @@ public class RatingDialog extends AppCompatDialogFragment {
     public interface RatingDialogCallback {
         void ratingResults(int stars, @NonNull String feedback);
         void ratingClicked(int stars, @Nullable RatingDialog dialog);
+        boolean solicitFeedback(int stars);
     }
 
     private EditText mFeedbackEditText;
@@ -219,6 +220,18 @@ public class RatingDialog extends AppCompatDialogFragment {
 
     //region Click Listeners
 
+    private void solicitFeedback(int stars) {
+        if(mCallback != null) {
+            if(mCallback.solicitFeedback(stars)) {
+                mFeedbackEditText.setVisibility(View.VISIBLE);
+            } else {
+                mFeedbackEditText.setVisibility(View.GONE);
+            }
+        } else {
+            mFeedbackEditText.setVisibility(stars == 5 ? View.GONE : View.VISIBLE);
+        }
+    }
+
     private View.OnClickListener mRating1ClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -236,10 +249,8 @@ public class RatingDialog extends AppCompatDialogFragment {
             mColorState[3] = mColors[0];
             mColorState[4] = mColors[0];
 
-
-            mFeedbackEditText.setVisibility(View.VISIBLE);
-
             mStarClicked = 1;
+            solicitFeedback(1);
             if(mCallback != null) mCallback.ratingClicked(1, getThis());
         }
     };
@@ -264,6 +275,7 @@ public class RatingDialog extends AppCompatDialogFragment {
             mFeedbackEditText.setVisibility(View.VISIBLE);
 
             mStarClicked = 2;
+            solicitFeedback(2);
             if(mCallback != null) mCallback.ratingClicked(2, getThis());
         }
     };
@@ -288,6 +300,7 @@ public class RatingDialog extends AppCompatDialogFragment {
             mFeedbackEditText.setVisibility(View.VISIBLE);
 
             mStarClicked = 3;
+            solicitFeedback(3);
             if(mCallback != null) mCallback.ratingClicked(3, getThis());
         }
     };
@@ -312,6 +325,7 @@ public class RatingDialog extends AppCompatDialogFragment {
             mFeedbackEditText.setVisibility(View.VISIBLE);
 
             mStarClicked = 4;
+            solicitFeedback(4);
             if(mCallback != null) mCallback.ratingClicked(4, getThis());
         }
     };
@@ -336,6 +350,7 @@ public class RatingDialog extends AppCompatDialogFragment {
             fadeOut(mFeedbackEditText);
 
             mStarClicked = 5;
+            solicitFeedback(5);
             if(mCallback != null) mCallback.ratingClicked(5, getThis());
         }
     };
