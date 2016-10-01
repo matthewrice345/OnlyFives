@@ -22,5 +22,5 @@ To include into your project add the following to your apps build.gradle Be sure
         compile(name:'onlyfives', ext:'aar')
     }
 
-
+> - [Download Material](https://github.com/matthewrice345/OnlyFives/screens/screenshot_1.jpg)
 
