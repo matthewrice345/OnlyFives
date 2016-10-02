@@ -20,8 +20,15 @@ public class SampleActivity extends AppCompatActivity implements RatingDialog.Ra
         show.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Show the dialog
-                RatingDialog.show(getSupportFragmentManager(), RatingDialog.Style.LIGHT);
+                //Show the dialog the simple way:
+                //RatingDialog.show(getSupportFragmentManager(), RatingDialog.Style.LIGHT);
+
+                //Show the dialog the complicated way
+                RatingDialog.show(getSupportFragmentManager(), RatingDialog.Style.LIGHT,
+                        "Dialog Title",
+                        "Feedback Hint",
+                        "Feedback Given Toast",
+                        false);
             }
         });
     }

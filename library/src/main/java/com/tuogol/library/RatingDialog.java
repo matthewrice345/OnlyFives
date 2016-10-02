@@ -16,6 +16,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDialogFragment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,6 +41,10 @@ public class RatingDialog extends AppCompatDialogFragment {
 
     private static final String RATING_STATE = "RATING_STATE";
     private static final String SHOW_AS_LIGHT = "SHOW_AS_LIGHT";
+    private static final String DIALOG_TITLE = "DIALOG_TITLE";
+    private static final String DIALOG_FEEDBACK_HINT = "DIALOG_FEEDBACK_HINT";
+    private static final String DIALOG_TOAST = "DIALOG_TOAST";
+    private static final String CANCELABLE = "CANCELABLE";
 
     /**
      * Interface for getting rating results and click events
@@ -96,11 +101,12 @@ public class RatingDialog extends AppCompatDialogFragment {
 
         View rootView = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_rating, null);
 
-        boolean showAsLight = getArguments().getBoolean(SHOW_AS_LIGHT, true);
+        final boolean showAsLight = getArguments().getBoolean(SHOW_AS_LIGHT, true);
+        final String title = getArguments().getString(DIALOG_TITLE, getString(R.string.rating_dialog_title));
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),
                 showAsLight ? R.style.RatingDialogStyle_Light : R.style.RatingDialogStyle_Dark);
-        builder.setTitle(R.string.rating_dialog_title);
+        builder.setTitle(title);
         builder.setView(rootView);
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
@@ -110,13 +116,27 @@ public class RatingDialog extends AppCompatDialogFragment {
         });
         setup(rootView);
 
-        return builder.create();
+        final boolean cancelable = getArguments().getBoolean(CANCELABLE, true);
+
+        Dialog dialog = builder.create();
+        dialog.setCancelable(cancelable);
+        dialog.setCanceledOnTouchOutside(cancelable);
+        return dialog;
     }
 
     @Override
     public void onDismiss(DialogInterface dialog) {
         if (mFeedbackEditText != null && mFeedbackEditText.getText().length() > 0 && getContext() != null) {
-            Toast.makeText(getActivity(), R.string.rating_dialog_feedback_thanks, Toast.LENGTH_LONG).show();
+
+            if(getArguments().containsKey(DIALOG_TOAST)) {
+                String toast = getArguments().getString(DIALOG_TOAST);
+                if(!TextUtils.isEmpty(toast)) {
+                    Toast.makeText(getActivity(), toast, Toast.LENGTH_LONG).show();
+                }
+            } else {
+                Toast.makeText(getActivity(), R.string.rating_dialog_feedback_thanks, Toast.LENGTH_LONG).show();
+            }
+
             if(mCallback != null) {
                 mCallback.ratingResults(mStarClicked, mFeedbackEditText.getText().toString());
             }
@@ -145,6 +165,19 @@ public class RatingDialog extends AppCompatDialogFragment {
         return dialog;
     }
 
+    private static RatingDialog newInstance(boolean showAsLight, String title, String feedbackHint, String toast, boolean cancelable) {
+        Bundle args = new Bundle();
+        args.putBoolean(SHOW_AS_LIGHT, showAsLight);
+        args.putString(DIALOG_TITLE, title);
+        args.putString(DIALOG_FEEDBACK_HINT, feedbackHint);
+        args.putString(DIALOG_TOAST, toast);
+        args.putBoolean(CANCELABLE, cancelable);
+
+        RatingDialog dialog = new RatingDialog();
+        dialog.setArguments(args);
+        return dialog;
+    }
+
     /**
      * Show the dialog
      * @param fm Support Fragment Manager
@@ -157,6 +190,19 @@ public class RatingDialog extends AppCompatDialogFragment {
 
         try {
             RatingDialog dialog = RatingDialog.newInstance(style == Style.LIGHT);
+            dialog.show(fm, RatingDialog.class.getSimpleName());
+        } catch (IllegalStateException e) {
+            Log.e("RatingDialog", "Dialog Down, Dialog Down! " + e);
+        }
+    }
+
+    public static void show(FragmentManager fm, Style style, String title, String feedbackHint, String toast, boolean cancelable) {
+        if(fm.findFragmentByTag(RatingDialog.class.getSimpleName()) != null) {
+            remove(fm);
+        }
+
+        try {
+            RatingDialog dialog = RatingDialog.newInstance(style == Style.LIGHT, title, feedbackHint, toast, cancelable);
             dialog.show(fm, RatingDialog.class.getSimpleName());
         } catch (IllegalStateException e) {
             Log.e("RatingDialog", "Dialog Down, Dialog Down! " + e);
@@ -183,6 +229,9 @@ public class RatingDialog extends AppCompatDialogFragment {
         mRating4 = (ImageView) rootView.findViewById(R.id.rating4);
         mRating5 = (ImageView) rootView.findViewById(R.id.rating5);
         mFeedbackEditText = (EditText) rootView.findViewById(R.id.feedbackEditText);
+
+        final String feedbackHint = getArguments().getString(DIALOG_FEEDBACK_HINT, getString(R.string.rating_dialog_title));
+        mFeedbackEditText.setHint(feedbackHint);
 
         //Init Rating Colors
         colorViews(mColors[0], mRating1, mRating2, mRating3, mRating4, mRating5);
@@ -236,11 +285,11 @@ public class RatingDialog extends AppCompatDialogFragment {
         @Override
         public void onClick(View v) {
             //Animate
-            colorDrawable(mRating1, mColorState[0], mColors[1]);
-            colorDrawable(mRating2, mColorState[1], mColors[0]);
-            colorDrawable(mRating3, mColorState[2], mColors[0]);
-            colorDrawable(mRating4, mColorState[3], mColors[0]);
-            colorDrawable(mRating5, mColorState[4], mColors[0]);
+            colorDrawable(mRating1, mColorState[0], mColors[1], 1);
+            colorDrawable(mRating2, mColorState[1], mColors[0], 2);
+            colorDrawable(mRating3, mColorState[2], mColors[0], 3);
+            colorDrawable(mRating4, mColorState[3], mColors[0], 4);
+            colorDrawable(mRating5, mColorState[4], mColors[0], 5);
 
             //Update State
             mColorState[0] = mColors[1];
@@ -259,11 +308,11 @@ public class RatingDialog extends AppCompatDialogFragment {
         @Override
         public void onClick(View v) {
             //Animate
-            colorDrawable(mRating1, mColorState[0], mColors[1]);
-            colorDrawable(mRating2, mColorState[1], mColors[1]);
-            colorDrawable(mRating3, mColorState[2], mColors[0]);
-            colorDrawable(mRating4, mColorState[3], mColors[0]);
-            colorDrawable(mRating5, mColorState[4], mColors[0]);
+            colorDrawable(mRating1, mColorState[0], mColors[1], 1);
+            colorDrawable(mRating2, mColorState[1], mColors[1], 2);
+            colorDrawable(mRating3, mColorState[2], mColors[0], 3);
+            colorDrawable(mRating4, mColorState[3], mColors[0], 4);
+            colorDrawable(mRating5, mColorState[4], mColors[0], 5);
 
             //Update State
             mColorState[0] = mColors[1];
@@ -284,11 +333,11 @@ public class RatingDialog extends AppCompatDialogFragment {
         @Override
         public void onClick(View v) {
             //Animate
-            colorDrawable(mRating1, mColorState[0], mColors[1]);
-            colorDrawable(mRating2, mColorState[1], mColors[1]);
-            colorDrawable(mRating3, mColorState[2], mColors[1]);
-            colorDrawable(mRating4, mColorState[3], mColors[0]);
-            colorDrawable(mRating5, mColorState[4], mColors[0]);
+            colorDrawable(mRating1, mColorState[0], mColors[1], 1);
+            colorDrawable(mRating2, mColorState[1], mColors[1], 2);
+            colorDrawable(mRating3, mColorState[2], mColors[1], 3);
+            colorDrawable(mRating4, mColorState[3], mColors[0], 4);
+            colorDrawable(mRating5, mColorState[4], mColors[0], 5);
 
             //Update State
             mColorState[0] = mColors[1];
@@ -309,11 +358,11 @@ public class RatingDialog extends AppCompatDialogFragment {
         @Override
         public void onClick(View v) {
             //Animate
-            colorDrawable(mRating1, mColorState[0], mColors[1]);
-            colorDrawable(mRating2, mColorState[1], mColors[1]);
-            colorDrawable(mRating3, mColorState[2], mColors[1]);
-            colorDrawable(mRating4, mColorState[3], mColors[1]);
-            colorDrawable(mRating5, mColorState[4], mColors[0]);
+            colorDrawable(mRating1, mColorState[0], mColors[1], 1);
+            colorDrawable(mRating2, mColorState[1], mColors[1], 2);
+            colorDrawable(mRating3, mColorState[2], mColors[1], 3);
+            colorDrawable(mRating4, mColorState[3], mColors[1], 4);
+            colorDrawable(mRating5, mColorState[4], mColors[0], 5);
 
             //Update State
             mColorState[0] = mColors[1];
@@ -334,11 +383,11 @@ public class RatingDialog extends AppCompatDialogFragment {
         @Override
         public void onClick(View v) {
             //Animate
-            colorDrawable(mRating1, mColorState[0], mColors[1]);
-            colorDrawable(mRating2, mColorState[1], mColors[1]);
-            colorDrawable(mRating3, mColorState[2], mColors[1]);
-            colorDrawable(mRating4, mColorState[3], mColors[1]);
-            colorDrawable(mRating5, mColorState[4], mColors[1]);
+            colorDrawable(mRating1, mColorState[0], mColors[1], 1);
+            colorDrawable(mRating2, mColorState[1], mColors[1], 2);
+            colorDrawable(mRating3, mColorState[2], mColors[1], 3);
+            colorDrawable(mRating4, mColorState[3], mColors[1], 4);
+            colorDrawable(mRating5, mColorState[4], mColors[1], 5);
 
             //Update State
             mColorState[0] = mColors[1];
@@ -370,9 +419,10 @@ public class RatingDialog extends AppCompatDialogFragment {
         return drawable;
     }
 
-    private void colorDrawable(final ImageView view, int colorFrom, int colorTo) {
+    private void colorDrawable(final ImageView view, int colorFrom, int colorTo, int multiplier) {
         ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-        colorAnimation.setDuration(320);
+        int value = multiplier * 120;
+        colorAnimation.setDuration(320 + value);
         colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 
             @Override
